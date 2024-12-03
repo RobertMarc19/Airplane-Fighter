@@ -25,7 +25,7 @@ function score() {
 }
 setInterval(score, 1000);
 
-function getRandomInt(max) {
+function getRandomPosition(max) {
   return Math.floor(Math.random() * max);
 }
 
@@ -34,7 +34,7 @@ const obstacleWidth = 20;
 const obstacleHeight = 20;
 
 function spawnObjects() {
-  const x = getRandomInt(canvas.width - obstacleWidth);
+  const x = getRandomPosition(canvas.width - obstacleWidth);
   const y = 0;
   const speed = 1;
   objects.push({ x, y, width: obstacleWidth, height: obstacleHeight, speed });
