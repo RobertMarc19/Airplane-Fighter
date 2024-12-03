@@ -19,12 +19,6 @@ window.addEventListener("keydown", function (event) {
   }
 });
 
-function score() {
-  playerScore += 1;
-  document.getElementById("score").innerHTML = playerScore;
-}
-setInterval(score, 1000);
-
 function getRandomPosition(max) {
   return Math.floor(Math.random() * max);
 }
@@ -72,6 +66,7 @@ function drawObjects() {
     }
     if (obj.y > canvas.height) {
       objects.splice(i, 1);
+      ++playerScore;
     }
   }
   drawScore();
