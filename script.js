@@ -53,7 +53,6 @@ function checkCollision(plane, objects) {
       return true;
     }
   }
-  return false;
 }
 
 function drawObstaclesAndPlane(x, y, width, height, color) {
