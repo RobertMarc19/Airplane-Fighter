@@ -1,7 +1,6 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-let leftPosition = window.innerWidth / 2;
 const screenWidth = window.innerWidth;
 const screenHeight = window.innerHeight;
 
@@ -10,12 +9,24 @@ canvas.height = screenHeight;
 
 let playerScore = 0;
 
+const objects = [];
+const obstacleWidth = 20;
+const obstacleHeight = 20;
+const miliseconds = 1000;
+
+let plane = {
+  x: screenWidth / 2,
+  y: 650,
+  width: 20,
+  height: 20,
+};
+
 window.addEventListener("keydown", function (event) {
   const step = 10;
-  if (event.key === "ArrowLeft" && leftPosition > 0) {
-    leftPosition -= step;
-  } else if (event.key === "ArrowRight" && leftPosition < canvas.width - 20) {
-    leftPosition += step;
+  if (event.key === "ArrowLeft" && plane.x > 0) {
+    plane.x -= step;
+  } else if (event.key === "ArrowRight" && plane.x < canvas.width - plane.width) {
+    plane.x += step;
   }
 });
 
@@ -23,28 +34,33 @@ function getRandomPosition(max) {
   return Math.floor(Math.random() * max);
 }
 
-const objects = [];
-const obstacleWidth = 20;
-const obstacleHeight = 20;
-
 function spawnObjects() {
-  const x = getRandomPosition(canvas.width - canvas.height);
+  const x = getRandomPosition(canvas.width - obstacleWidth);
   const y = 0;
   const speed = 1;
   objects.push({ x, y, width: obstacleWidth, height: obstacleHeight, speed });
 }
-setInterval(spawnObjects, 1000);
 
+setInterval(spawnObjects, miliseconds);
 
-let planeY = 650;
-let planeWidth = 20;
-let planeHeight = 20;
-
-function drawPlane() {
-  ctx.fillStyle = "blue";
-  ctx.fillRect(leftPosition, planeY, planeWidth, planeHeight);
+function checkCollision(plane, objects) {
+  for (let i = objects.length - 1; i >= 0; --i) {
+    const obj = objects[i];
+    if (obj.x < plane.x + plane.width &&
+      obj.x + obj.width > plane.x &&
+      obj.y < plane.y + plane.height &&
+      obj.y + obj.height > plane.y) {
+      return true;
+    }
+  }
+  return false;
 }
 
+function drawObstaclesAndPlane(x, y, width, height, color) {
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, width, height);
+}
+ 
 function drawScore() {
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
@@ -56,25 +72,23 @@ function drawObjects() {
   for (let i = objects.length - 1; i >= 0; --i) {
     const obj = objects[i];
     obj.y += obj.speed;
-    ctx.fillStyle = "black";
-    ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
-    if (obj.x < leftPosition + planeWidth && 
-        obj.x + obj.width > leftPosition && 
-        obj.y < planeY + planeHeight &&
-        obj.y + obj.height > planeY) { 
+    drawObstaclesAndPlane(obj.x, obj.y, obstacleWidth, obstacleHeight, "black")
+    if (checkCollision(plane, objects)) {
       alert("Game over! Your score was: " + playerScore);
+      return;
     }
     if (obj.y > canvas.height) {
       objects.splice(i, 1);
       ++playerScore;
     }
   }
+  drawObstaclesAndPlane(plane.x, plane.y, plane.width, plane.height, "blue");
   drawScore();
-  drawPlane();
 }
 
 function animationLoop() {
   drawObjects();
   requestAnimationFrame(animationLoop);
 }
+
 animationLoop();
