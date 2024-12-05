@@ -74,7 +74,6 @@ function drawObjects() {
     drawObstaclesAndPlane(obj.x, obj.y, obstacleWidth, obstacleHeight, "black")
     if (checkCollision(plane, objects)) {
       alert("Game over! Your score was: " + playerScore);
-      return;
     }
     if (obj.y > canvas.height) {
       objects.splice(i, 1);
