@@ -47,12 +47,11 @@ function spawnObjects() {
 setInterval(spawnObjects, miliseconds);
 
 function checkCollision(plane, obj) {
-  if (obj.x < plane.x + plane.width &&
+  return (obj.x < plane.x + plane.width &&
     obj.x + obj.width > plane.x &&
     obj.y < plane.y + plane.height &&
-    obj.y + obj.height > plane.y) {
-    return true;
-  }
+    obj.y + obj.height > plane.y
+  );
 }
 
 function drawObstaclesAndPlane(x, y, width, height, color) {
