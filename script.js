@@ -13,6 +13,10 @@ const objects = [];
 const obstacleWidth = 20;
 const obstacleHeight = 20;
 const miliseconds = 1000;
+const bullets = [];
+const bulletWidth = 5;
+const bulletHeight = 10;
+const bulletSpeed = 5;
 
 const plane = {
   x: screenWidth / 2,
@@ -30,11 +34,22 @@ window.addEventListener("keydown", function (event) {
     plane.x < canvas.width - plane.width
   ) {
     plane.x += step;
+  } else if (event.key === " ") {
+    spawnBullet();
   }
 });
 
 function getRandomPosition(max) {
   return Math.floor(Math.random() * max);
+}
+
+function spawnBullet() {
+  bullets.push({
+    x: plane.x + (plane.width / 2) - (bulletWidth / 2),
+    y: plane.y,
+    width: bulletWidth,
+    height: bulletHeight,
+  });
 }
 
 function spawnObjects() {
@@ -47,7 +62,8 @@ function spawnObjects() {
 setInterval(spawnObjects, miliseconds);
 
 function checkCollision(plane, obj) {
-  return (obj.x < plane.x + plane.width &&
+  return (
+    obj.x < plane.x + plane.width &&
     obj.x + obj.width > plane.x &&
     obj.y < plane.y + plane.height &&
     obj.y + obj.height > plane.y
@@ -76,7 +92,28 @@ function drawObjects() {
     }
     if (obj.y > canvas.height) {
       objects.splice(i, 1);
-      ++playerScore;
+    }
+  }
+  for (let i = bullets.length - 1; i >= 0; --i) {
+    const bullet = bullets[i];
+    bullet.y -= bulletSpeed;
+    drawObstaclesAndPlane(
+      bullet.x,
+      bullet.y,
+      bullet.width,
+      bullet.height,
+      "yellow"
+    );
+    if (bullet.y + bullet.height < 0) {
+      bullets.splice(i, 1);
+    }
+    for (let j = objects.length - 1; j >= 0; --j) {
+      const obj = objects[j];
+      if (checkCollision(bullet, obj)) {
+        bullets.splice(i, 1);
+        objects.splice(j, 1);
+        ++playerScore;
+      }
     }
   }
   drawObstaclesAndPlane(plane.x, plane.y, plane.width, plane.height, "blue");
