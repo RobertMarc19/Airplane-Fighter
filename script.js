@@ -45,7 +45,7 @@ function getRandomPosition(max) {
 
 function spawnBullet() {
   bullets.push({
-    x: plane.x + (plane.width / 2) - (bulletWidth / 2),
+    x: plane.x + plane.width / 2 - bulletWidth / 2,
     y: plane.y,
     width: bulletWidth,
     height: bulletHeight,
@@ -61,16 +61,16 @@ function spawnObjects() {
 
 setInterval(spawnObjects, miliseconds);
 
-function checkCollision(plane, obj) {
+function checkCollision(obj1, obj2) {
   return (
-    obj.x < plane.x + plane.width &&
-    obj.x + obj.width > plane.x &&
-    obj.y < plane.y + plane.height &&
-    obj.y + obj.height > plane.y
+    obj2.x < obj1.x + obj1.width &&
+    obj2.x + obj2.width > obj1.x &&
+    obj2.y < obj1.y + obj1.height &&
+    obj2.y + obj2.height > obj1.y
   );
 }
 
-function drawObstaclesAndPlane(x, y, width, height, color) {
+function drawInteractiveObjects(x, y, width, height, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, width, height);
 }
@@ -81,23 +81,11 @@ function drawScore() {
   ctx.fillText(`Score: ${playerScore}`, 10, 30);
 }
 
-function drawObjects() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (let i = 0; i < objects.length; ++i) {
-    const obj = objects[i];
-    obj.y += obj.speed;
-    drawObstaclesAndPlane(obj.x, obj.y, obstacleWidth, obstacleHeight, "black");
-    if (checkCollision(plane, obj)) {
-      alert("Game over! Your score was: " + playerScore);
-    }
-    if (obj.y > canvas.height) {
-      objects.splice(i, 1);
-    }
-  }
+function drawBullets() {
   for (let i = bullets.length - 1; i >= 0; --i) {
     const bullet = bullets[i];
     bullet.y -= bulletSpeed;
-    drawObstaclesAndPlane(
+    drawInteractiveObjects(
       bullet.x,
       bullet.y,
       bullet.width,
@@ -116,7 +104,29 @@ function drawObjects() {
       }
     }
   }
-  drawObstaclesAndPlane(plane.x, plane.y, plane.width, plane.height, "blue");
+}
+
+function drawObjects() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < objects.length; ++i) {
+    const obj = objects[i];
+    obj.y += obj.speed;
+    drawInteractiveObjects(
+      obj.x,
+      obj.y,
+      obstacleWidth,
+      obstacleHeight,
+      "black"
+    );
+    if (checkCollision(plane, obj)) {
+      alert("Game over! Your score was: " + playerScore);
+    }
+    if (obj.y > canvas.height) {
+      objects.splice(i, 1);
+    }
+  }
+  drawBullets();
+  drawInteractiveObjects(plane.x, plane.y, plane.width, plane.height, "blue");
   drawScore();
 }
 
