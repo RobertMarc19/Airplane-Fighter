@@ -125,13 +125,13 @@ function drawObjects() {
       objects.splice(i, 1);
     }
   }
-  drawBullets();
-  drawInteractiveObjects(plane.x, plane.y, plane.width, plane.height, "blue");
-  drawScore();
 }
 
 function animationLoop() {
   drawObjects();
+  drawBullets();
+  drawInteractiveObjects(plane.x, plane.y, plane.width, plane.height, "blue");
+  drawScore();
   requestAnimationFrame(animationLoop);
 }
 
